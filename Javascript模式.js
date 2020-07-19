@@ -212,6 +212,7 @@ kid.say()
  * 缺点：继承了两个对象的属性（this的和prototype的）一般this的不需要继承过来
  * 每次创建一个新的对象，都需要重新执行这种继承，会重复创建对象，效率低下
  */
+
 // #2 借用构造函数
 function Parent(){
     this.tag = ['js','css']
@@ -239,3 +240,74 @@ instanceChildA.tag.push('html')
 instanceChildB.tag.push('php')
 
 parent.tag.join(',')  // js,css,html
+
+
+// 通过借用构造函数实现多重继承
+function Cat(){
+    this.legs = 4
+    this.say = function(){
+        return 'mm'
+    }
+}
+function Bird(){
+    this.wings = 2
+    this.fly = true
+}
+
+function CatWings(){
+    Cat.apply(this)
+    Bird.apply(this)
+}
+
+var jane = new CatWings()
+jane.fly // true
+jane.legs // 4
+jane.wings // 2
+jane.say = function(){}
+
+/**
+ * 缺点：无法从原型继承任何东西
+ * 优点：获得父对象自己成员的真实副本，不会存在子对象意外覆盖父对象属性的风险
+ * */ 
+
+ // #3 借用和设置原型
+ function Parent(){}
+ function Child(a,b,c,d){
+     Parent.apply(this,a,b,c,d)
+ }
+ Child.prototype = new Parent()
+
+ /**
+  * 优点：能或得父对象本身的成员副本以及指向父对象中可复用功能（以原型成员方式实现的那些功能）引用
+  *      子对象也能够将任意参数传递到父构造函数中
+  * 缺点：父构造函数被调用了两次，导致效率低下
+  */
+
+// #4 共享原型
+function Parent(){}
+function Child(){}
+function inherit(C,P){
+    C.prototype = P.prototype  // 所有的方法和属性都定义在原型上，继承时将子对象和父对象都原型设置为同一个
+}
+
+/**
+ * 缺点：继承链上的某处修改了原型他将会影响父对象和祖先对象
+ */
+
+ // #5 临时构造函数  这种模式称为代理函数或代理构造函数
+ function Parent(){}
+ function Child(){}
+ function inherit(C,P){
+     var F = function(){}
+     F.prototype = P.prototype
+     C.prototype = new F()
+     C.uber = P.prototype // 超类 存储父类原型
+     C.prototype.constructor = C // 重置构造函数指针
+ }
+
+ // Object.create(parent) 实现
+function object(o){
+    function F(){}
+    F.prototype = o
+    return new F()
+}
