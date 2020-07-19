@@ -187,7 +187,55 @@ SandBox('dom','event',function(box){
     })
 })
  
+// 类式继承的5种模式
 
+// #1 默认模式
+function Parent(name){
+    this.name = name || 'Adam'
+}
+Parent.prototype.say = function(){
+    return this.name
+}
+function Child(name){}
+// 继承函数
+function inherit(C,P){
+    C.prototype = new P()
+}
+inherit(Child,Parent)
+// test
+var kid = new Child()
 
+kid.name = 'Adam'
+kid.say()
 
+/**
+ * 缺点：继承了两个对象的属性（this的和prototype的）一般this的不需要继承过来
+ * 每次创建一个新的对象，都需要重新执行这种继承，会重复创建对象，效率低下
+ */
+// #2 借用构造函数
+function Parent(){
+    this.tag = ['js','css']
+}
+var parent = new Parent()
 
+function ChildA(){}
+ChildA.prototype = parent
+
+function ChildB(){
+    Parent.call(this)
+}
+
+// test
+var instanceParent = new Parent()
+var instanceChildA = new ChildA()
+var instanceChildB = new ChildB()
+
+instanceParent.hasOwnProperty('tag')  // true
+instanceChildA.hasOwnProperty('tag')  // false
+instanceChildB.hasOwnProperty('tag')  // true  会复制一个tag的副本
+
+// 修改继承tag时表现出来的差异
+instanceChildA.tag.push('html')
+instanceChildB.tag.push('php')
+
+parent.tag.join(',')  // js,css,html
