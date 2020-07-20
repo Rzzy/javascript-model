@@ -311,3 +311,33 @@ function object(o){
     F.prototype = o
     return new F()
 }
+function Person(){
+    this.name = 'Adam'
+}
+Person.prototype.getName = function(){
+    return this.name
+}
+var papa = new Person()
+var kid = object(papa)
+kid.getName()  // 'Adam'
+
+// 单例模式
+// 静态属性中的实例
+function Universe(){
+    // 检查是否已经有了一个实例
+    if(typeof Universe.instance === 'object') {
+        return Universe.instance
+    }
+    // 正常运行
+    this.start_time = 0
+    this.bang = 'Big'
+
+    // 缓存
+    Universe.instance = this
+}
+
+// 测试
+var uni = new Universe()
+var uni2 = new Universe()
+
+uni == uni2 // true 
