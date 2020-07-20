@@ -18,7 +18,7 @@ MYAPP.namespace = function(ns,string){
 }
 var module2 = MYAPP.namespace("MYAPP.modules.module2")
 
-// 似有属性和方法
+// 私有属性和方法
 // 方式 1
 function GodGet(){
     var name = 'Rz'   // 私有成员，如果是对象，则复制一份返回
